@@ -1,25 +1,26 @@
-
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:weather_app_interviw/models/weather_model.dart';
 
 class weatherProvider extends ChangeNotifier {
+  ///........................to get location............................
+  Location location = new Location();
 
-
-///........................to get location............................
-Location location = new Location();
-
- bool? _serviceEnabled;
+  bool? _serviceEnabled;
   PermissionStatus? _permissionGranted;
   LocationPermission? _locationData;
   Position? curentPosition;
 
+  getLocationbyData(String address) async {
+    List<geo.Location> locations =
+        await geo.locationFromAddress(address);
+    print("the location is locations ${location}");
+  }
 
   getLocation() async {
-  
     _serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!_serviceEnabled!) {
       print("service disabled");
@@ -38,17 +39,10 @@ Location location = new Location();
     curentPosition = await Geolocator.getCurrentPosition();
   }
 
-
-
-
-
-
-
-
 //-------------to get weather details ----------------
   Future<void> getWeatherReport(String latitude, String longitude) async {
     WeatherDetailsModel? weatherReport;
-  
+
     String uri =
         "https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=8.570253859088986&lon=76.85196127742529&dt=1697962033&appid=bac97938dfcac7bb4def50d381e18bbd";
     try {

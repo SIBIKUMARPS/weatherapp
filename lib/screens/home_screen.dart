@@ -10,38 +10,32 @@ class home_screen extends StatefulWidget {
 }
 
 class _home_screenState extends State<home_screen> {
-
-
-@override
+  @override
   void initState() {
-
-          Provider.of<weatherProvider>(context, listen: false).getLocation();
+    Provider.of<weatherProvider>(context, listen: false).getLocation();
 
     // TODO: implement initState
     super.initState();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<weatherProvider>(
-        builder: (context, pro, value) {
-          return Container(
-             child: Center(
-               child: TextButton(
-                  child: Text("Click Here", style: TextStyle(fontSize: 20),),
-                 onPressed: () {
-                    pro.getWeatherReport("latitude", "longitude");
-
-                 },
-                ),
-             )
-
-          );
-        }
-      ),
+      body: Consumer<weatherProvider>(builder: (context, pro, value) {
+        return Container(
+            child: Center(
+          child: TextButton(
+            child: Text(
+              "Click Here",
+              style: TextStyle(fontSize: 20),
+            ),
+            onPressed: () {
+              pro.getLocationbyData("Kozhikode");
+              pro.getWeatherReport("latitude", "longitude");
+            },
+          ),
+        ));
+      }),
     );
   }
 }
