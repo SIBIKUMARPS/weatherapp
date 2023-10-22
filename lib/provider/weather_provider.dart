@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:weather_app_interviw/models/weather_model.dart';
 
@@ -11,32 +12,31 @@ class weatherProvider extends ChangeNotifier {
 ///........................to get location............................
 Location location = new Location();
 
-late bool _serviceEnabled;
-late PermissionStatus _permissionGranted;
-late LocationData _locationData;
+ bool? _serviceEnabled;
+  PermissionStatus? _permissionGranted;
+  LocationPermission? _locationData;
+  Position? curentPosition;
 
 
+  getLocation() async {
+  
+    _serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!_serviceEnabled!) {
+      print("service disabled");
+      _locationData = await Geolocator.requestPermission();
+    } else {
+      print("service  enabled");
+    }
 
-
-getcurentLocation()async{
-_serviceEnabled = await location.serviceEnabled();
-if (!_serviceEnabled) {
-  _serviceEnabled = await location.requestService();
-  if (!_serviceEnabled) {
-    return;
+    _locationData = await Geolocator.checkPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _locationData = await Geolocator.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+    curentPosition = await Geolocator.getCurrentPosition();
   }
-}
-
-_permissionGranted = await location.hasPermission();
-if (_permissionGranted == PermissionStatus.denied) {
-  _permissionGranted = await location.requestPermission();
-  if (_permissionGranted != PermissionStatus.granted) {
-    return;
-  }
-}
-
-_locationData = await location.getLocation();
-}
 
 
 

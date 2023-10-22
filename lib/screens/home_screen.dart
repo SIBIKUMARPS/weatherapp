@@ -15,7 +15,7 @@ class _home_screenState extends State<home_screen> {
 @override
   void initState() {
 
-          Provider.of<weatherProvider>(context, listen: false).getcurentLocation();
+          Provider.of<weatherProvider>(context, listen: false).getLocation();
 
     // TODO: implement initState
     super.initState();
