@@ -1,6 +1,9 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart' as geo;
+
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 import 'package:weather_app_interviw/models/weather_model.dart';
@@ -13,11 +16,22 @@ class weatherProvider extends ChangeNotifier {
   PermissionStatus? _permissionGranted;
   LocationPermission? _locationData;
   Position? curentPosition;
+  TextEditingController locationController = new TextEditingController();
+  String? currentAddress;
+  WeatherDetailsModel? weatherReport;
+  String? latitude;
+  String? longitude;
 
-  getLocationbyData(String address) async {
-    List<geo.Location> locations =
-        await geo.locationFromAddress(address);
-    print("the location is locations ${location}");
+  getLocationbyData() async {
+    try {
+      List<geo.Location> locations =
+          await geo.locationFromAddress(locationController.text);
+      print("the location is locations ${location}");
+      currentAddress = locationController.text;
+      notifyListeners();
+    } catch (e) {
+      print("e is $e");
+    }
   }
 
   getLocation() async {
@@ -37,14 +51,23 @@ class weatherProvider extends ChangeNotifier {
       }
     }
     curentPosition = await Geolocator.getCurrentPosition();
+
+    print(
+        "the latitudee and longitude iss ${curentPosition!.latitude} ${curentPosition!.latitude}");
+    List<geo.Placemark> placemarks = await geo.placemarkFromCoordinates(
+        curentPosition!.latitude, curentPosition!.longitude);
+    latitude = curentPosition!.latitude.toString();
+    longitude = curentPosition!.longitude.toString();
+
+    geo.Placemark place = placemarks[0];
+    currentAddress = "${place.locality},${place.country}";
+    notifyListeners();
   }
 
 //-------------to get weather details ----------------
-  Future<void> getWeatherReport(String latitude, String longitude) async {
-    WeatherDetailsModel? weatherReport;
-
+  Future<void> getWeatherReport(String date) async {
     String uri =
-        "https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=8.570253859088986&lon=76.85196127742529&dt=1697962033&appid=bac97938dfcac7bb4def50d381e18bbd";
+        "https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=$latitude&lon=$longitude&dt=$date&appid=bac97938dfcac7bb4def50d381e18bbd";
     try {
       var response = await Dio().post(uri,
           options: Options(headers: {
@@ -55,7 +78,7 @@ class weatherProvider extends ChangeNotifier {
       weatherReport = WeatherDetailsModel.fromJson(response.data);
       notifyListeners();
     } on DioError catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 }
