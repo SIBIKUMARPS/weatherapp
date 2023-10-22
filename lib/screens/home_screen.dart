@@ -10,6 +10,19 @@ class home_screen extends StatefulWidget {
 }
 
 class _home_screenState extends State<home_screen> {
+
+
+@override
+  void initState() {
+
+          Provider.of<weatherProvider>(context, listen: false).getcurentLocation();
+
+    // TODO: implement initState
+    super.initState();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
