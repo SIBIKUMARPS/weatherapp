@@ -26,7 +26,10 @@ class weatherProvider extends ChangeNotifier {
     try {
       List<geo.Location> locations =
           await geo.locationFromAddress(locationController.text);
-      print("the location is locations ${location}");
+      print(
+          "the location is locations ${locations[0].latitude} ${locations[0].longitude}");
+      latitude = locations[0].latitude.toString();
+      longitude = locations[0].longitude.toString();
       currentAddress = locationController.text;
       notifyListeners();
     } catch (e) {
@@ -66,6 +69,7 @@ class weatherProvider extends ChangeNotifier {
 
 //-------------to get weather details ----------------
   Future<void> getWeatherReport(String date) async {
+    print("the latitude longitude and date iss $latitude, $longitude, $date");
     String uri =
         "https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=$latitude&lon=$longitude&dt=$date&appid=bac97938dfcac7bb4def50d381e18bbd";
     try {
@@ -78,7 +82,7 @@ class weatherProvider extends ChangeNotifier {
       weatherReport = WeatherDetailsModel.fromJson(response.data);
       notifyListeners();
     } on DioError catch (e) {
-      debugPrint(e.toString());
+      debugPrint("hfghgg" + e.toString());
     }
   }
 }

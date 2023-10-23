@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:weather_app_interviw/provider/weather_provider.dart';
+import 'package:weather_app_interviw/screens/detail_screen.dart';
 
 class home_screen extends StatefulWidget {
   const home_screen({super.key});
@@ -30,7 +33,6 @@ class _home_screenState extends State<home_screen> {
   @override
   void initState() {
     Provider.of<weatherProvider>(context, listen: false).getLocation();
-
     // TODO: implement initState
     super.initState();
   }
@@ -82,42 +84,49 @@ class _home_screenState extends State<home_screen> {
                 );
               }),
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: 5,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: InkWell(
-                    onTap: () {
-                      print(Timestamp.fromDate(dates[index]).toString());
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.date_range),
-                            padding: EdgeInsets.zero,
-                            onPressed: () {
-                              print('Yay!');
-                            },
-                          ),
-                          Text(DateFormat('yyyy-MM-dd').format(dates[index])),
-                          const Expanded(child: SizedBox()),
-                          const Icon(
-                            Icons.arrow_right,
-                            size: 40,
-                          )
-                        ],
+            Consumer<weatherProvider>(builder: (context, pro, value) {
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: 5,
+                itemBuilder: (BuildContext context, int index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: InkWell(
+                      onTap: () {
+                        pro.getWeatherReport(Timestamp.fromDate(dates[index]).seconds.toString());
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const detailScreen()));
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.date_range),
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                print('Yay!');
+                              },
+                            ),
+                            Text(DateFormat('yyyy-MM-dd').format(dates[index])),
+                            const Expanded(child: SizedBox()),
+                            const Icon(
+                              Icons.arrow_right,
+                              size: 40,
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            )
+                  );
+                },
+              );
+            })
           ],
         ),
       )),
