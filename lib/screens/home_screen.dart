@@ -93,7 +93,15 @@ class _home_screenState extends State<home_screen> {
                     padding: const EdgeInsets.only(top: 10),
                     child: InkWell(
                       onTap: () {
-                        pro.getWeatherReport(Timestamp.fromDate(dates[index]).seconds.toString());
+                        if (index == 0) {
+                          int time =
+                              Timestamp.fromDate(dates[index]).seconds - 3700;
+                          pro.getWeatherReport(time.toString());
+                        } else {
+                          pro.getWeatherReport(Timestamp.fromDate(dates[index])
+                              .seconds
+                              .toString());
+                        }
 
                         Navigator.push(
                             context,

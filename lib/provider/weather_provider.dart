@@ -21,6 +21,13 @@ class weatherProvider extends ChangeNotifier {
   WeatherDetailsModel? weatherReport;
   String? latitude;
   String? longitude;
+  bool tempChange = false;
+
+  changeTemprature(bool value) {
+    tempChange = value;
+   
+    notifyListeners();
+  }
 
   getLocationbyData() async {
     try {

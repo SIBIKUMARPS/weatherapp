@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weather_app_interviw/provider/weather_provider.dart';
@@ -12,31 +13,159 @@ class detailScreen extends StatefulWidget {
 class _detailScreenState extends State<detailScreen> {
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
-      body: Column(
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          children: [
+            Consumer<weatherProvider>(builder: (context, pro, value) {
+              print("pro.weatherReport ${pro.weatherReport}");
 
-        children: [
-          Consumer<weatherProvider>(builder: (context, pro, value) {
-            print("pro.weatherReport ${pro.weatherReport}");
+              if (pro.weatherReport != null) {
+                return Column(
+                  children: [
+                    Center(
+                      child: Center(
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                            
+                                  const Text("DEGREE CELSIUS", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
 
-            if(pro.weatherReport!=null){
-              return Container(
-
-                child: Text(pro.weatherReport!.hourly![0].clouds.toString()),
-              );
-            }
-            else{
-              return Center(
-
-                child:Container(
-                    height: MediaQuery.of(context).size.height,
-                  child: CircularProgressIndicator())
-              );
-            }
-
-          })
-        ],
+                                  CupertinoSwitch(
+                                    activeColor: Colors.black,
+                                    value: pro.tempChange,
+                                    trackColor: Colors.black12,
+                                    onChanged: (value) =>
+                                        pro.changeTemprature(value),
+                                  ),
+                                  const Text("FAHRENHEIT", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                                ],
+                              ),
+                            ),
+                            const Image(
+                              image: AssetImage(
+                                'assets/images/sunwithcloud.png',
+                              ),
+                              height: 150,
+                              width: 150,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  pro.tempChange == false
+                                      ? " Temp: ${pro.weatherReport!.current!.temp.toString()} \u2103"
+                                      : "Temp: ${((pro.weatherReport!.current!.temp!)*(9/5 )+32).toStringAsFixed(2)} \u2109",
+                                  style: TextStyle(
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              height: size.height / 5,
+                              width: size.width / 2.5,
+                              child: Center(
+                                child: const Image(
+                                  image: AssetImage(
+                                    'assets/images/rain.png',
+                                  ),
+                                  height: 70,
+                                  width: 70,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              height: size.height / 5,
+                              width: size.width / 2.5,
+                              child: Center(
+                                child: const Image(
+                                  image: AssetImage('assets/images/sun.png'),
+                                  height: 70,
+                                  width: 70,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              height: size.height / 5,
+                              width: size.width / 2.5,
+                              child: Center(
+                                child: const Image(
+                                  image: AssetImage(
+                                    'assets/images/wind.png',
+                                  ),
+                                  height: 70,
+                                  width: 70,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              height: size.height / 5,
+                              width: size.width / 2.5,
+                              child: Center(
+                                child: const Image(
+                                  image: AssetImage('assets/images/cloud.png'),
+                                  height: 70,
+                                  width: 70,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  ],
+                );
+              } else {
+                return Center(
+                    child: SizedBox(
+                        height: MediaQuery.of(context).size.height - 50,
+                        width: MediaQuery.of(context).size.width - 50,
+                        child: SizedBox(
+                            height: 50,
+                            width: 50,
+                            child: Center(
+                                child: CircularProgressIndicator(
+                              color: Colors.black,
+                            )))));
+              }
+            })
+          ],
+        ),
       ),
     ));
   }
