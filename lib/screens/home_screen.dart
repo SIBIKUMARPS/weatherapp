@@ -51,91 +51,140 @@ class _home_screenState extends State<home_screen> {
       child: Scaffold(
           body: Padding(
         padding: const EdgeInsets.all(10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            Consumer<weatherProvider>(builder: (context, pro, value) {
-              return TextFormField(
-                controller: pro.locationController,
-                decoration: InputDecoration(
-                    suffixIcon: InkWell(
-                        onTap: () {
-                          pro.getLocationbyData();
-                        },
-                        child: const Icon(Icons.search)),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    hintText: "Enter Location"),
-              );
-            }),
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Consumer<weatherProvider>(builder: (context, pro, value) {
-                return Text(
-                  "The curent location is \n ${pro.currentAddress}",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(
+                height: 40,
+              ),
+              Consumer<weatherProvider>(builder: (context, pro, value) {
+                return TextFormField(
+                  cursorColor: Colors.black,
+                  controller: pro.locationController,
+                  decoration: InputDecoration(
+                      suffixIcon: InkWell(
+                          onTap: () {
+                            pro.getLocationbyData();
+                          },
+                          child: const Icon(
+                            Icons.search,
+                            color: Colors.black,
+                          )),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      hintText: "Enter Location"),
                 );
               }),
-            ),
-            Consumer<weatherProvider>(builder: (context, pro, value) {
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: 5,
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: InkWell(
-                      onTap: () {
-                        if (index == 0) {
-                          int time =
-                              Timestamp.fromDate(dates[index]).seconds - 3700;
-                          pro.getWeatherReport(time.toString());
-                        } else {
-                          pro.getWeatherReport(Timestamp.fromDate(dates[index])
-                              .seconds
-                              .toString());
-                        }
-
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const detailScreen()));
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(),
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.date_range),
-                              padding: EdgeInsets.zero,
-                              onPressed: () {
-                                print('Yay!');
-                              },
-                            ),
-                            Text(DateFormat('yyyy-MM-dd').format(dates[index])),
-                            const Expanded(child: SizedBox()),
-                            const Icon(
-                              Icons.arrow_right,
-                              size: 40,
-                            )
-                          ],
-                        ),
-                      ),
+              Padding(
+                padding: const EdgeInsets.only(top: 20, bottom: 20),
+                child:
+                    Consumer<weatherProvider>(builder: (context, pro, value) {
+                  return Text(
+                    pro.currentAddress == null
+                        ? "Please slect the place or turn on the location"
+                        : "The curent location is \n ${pro.currentAddress}",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
                   );
-                },
-              );
-            })
-          ],
+                }),
+              ),
+              Consumer<weatherProvider>(builder: (context, pro, value) {
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: 5,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(
+                        top: 10,
+                        bottom: 10,
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          if (pro.currentAddress != null) {
+                            if (index == 0) {
+                              int time =
+                                  Timestamp.fromDate(dates[index]).seconds -
+                                      3700;
+                              pro.getWeatherReport(time.toString(), context);
+                            } else {
+                              pro.getWeatherReport(
+                                  Timestamp.fromDate(dates[index])
+                                      .seconds
+                                      .toString(),
+                                  context);
+                            }
+
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const detailScreen()));
+                          } else {
+                            showDialog<void>(
+                              context: context,
+                              barrierDismissible:
+                                  false, // user must tap button!
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Please wait'),
+                                  content: SingleChildScrollView(
+                                    child: ListBody(
+                                      children: <Widget>[
+                                        Text(
+                                            'check your network conection and click after 1 minutes.'),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: const Text(
+                                        'OK',
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.date_range),
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  print('Yay!');
+                                },
+                              ),
+                              Text(DateFormat('yyyy-MM-dd')
+                                  .format(dates[index])),
+                              const Expanded(child: SizedBox()),
+                              const Icon(
+                                Icons.arrow_right,
+                                size: 40,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              })
+            ],
+          ),
         ),
       )),
     );

@@ -6,6 +6,7 @@ import 'package:geocoding/geocoding.dart' as geo;
 
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
+import 'package:weather_app_interviw/models/key_class.dart';
 import 'package:weather_app_interviw/models/weather_model.dart';
 
 class weatherProvider extends ChangeNotifier {
@@ -23,9 +24,14 @@ class weatherProvider extends ChangeNotifier {
   String? longitude;
   bool tempChange = false;
 
+  List cloud = [];
+  List wind = [];
+  List sun = [];
+  List rain = [];
+
   changeTemprature(bool value) {
     tempChange = value;
-   
+
     notifyListeners();
   }
 
@@ -33,25 +39,27 @@ class weatherProvider extends ChangeNotifier {
     try {
       List<geo.Location> locations =
           await geo.locationFromAddress(locationController.text);
-      print(
-          "the location is locations ${locations[0].latitude} ${locations[0].longitude}");
       latitude = locations[0].latitude.toString();
       longitude = locations[0].longitude.toString();
       currentAddress = locationController.text;
       notifyListeners();
-    } catch (e) {
-      print("e is $e");
+    } catch (_) {
+      ScaffoldMessenger.of(Keyclass.navKey.currentContext!)
+          .showSnackBar(SnackBar(
+        content: const Text("Something wrong in the location you entered",
+            style: TextStyle(color: Color(0xFF8B0000))),
+        backgroundColor: Color(0xFFFF9B9B),
+        shape: Border.all(color: Color(0xFFD40000)),
+        duration: Duration(seconds: 2),
+      ));
     }
   }
 
   getLocation() async {
     _serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!_serviceEnabled!) {
-      print("service disabled");
       _locationData = await Geolocator.requestPermission();
-    } else {
-      print("service  enabled");
-    }
+    } else {}
 
     _locationData = await Geolocator.checkPermission();
     if (_permissionGranted == PermissionStatus.denied) {
@@ -62,8 +70,6 @@ class weatherProvider extends ChangeNotifier {
     }
     curentPosition = await Geolocator.getCurrentPosition();
 
-    print(
-        "the latitudee and longitude iss ${curentPosition!.latitude} ${curentPosition!.latitude}");
     List<geo.Placemark> placemarks = await geo.placemarkFromCoordinates(
         curentPosition!.latitude, curentPosition!.longitude);
     latitude = curentPosition!.latitude.toString();
@@ -71,12 +77,12 @@ class weatherProvider extends ChangeNotifier {
 
     geo.Placemark place = placemarks[0];
     currentAddress = "${place.locality},${place.country}";
+
     notifyListeners();
   }
 
 //-------------to get weather details ----------------
-  Future<void> getWeatherReport(String date) async {
-    print("the latitude longitude and date iss $latitude, $longitude, $date");
+  Future<void> getWeatherReport(String date, BuildContext context) async {
     String uri =
         "https://api.openweathermap.org/data/2.5/onecall/timemachine?lat=$latitude&lon=$longitude&dt=$date&appid=bac97938dfcac7bb4def50d381e18bbd";
     try {
@@ -84,12 +90,28 @@ class weatherProvider extends ChangeNotifier {
           options: Options(headers: {
             "Content-Type": 'application/json',
           }));
-      print("the response iss ${response.data}");
 
       weatherReport = WeatherDetailsModel.fromJson(response.data);
+      for (int i = 0; i < weatherReport!.hourly!.length; i++) {
+        cloud.add(weatherReport!.hourly![i].clouds ?? 0);
+        wind.add(weatherReport!.hourly![i].windSpeed ?? 0);
+        sun.add(weatherReport!.hourly![i].temp ?? 0);
+        rain.add(weatherReport!.hourly![i].rain ?? 0);
+      }
+      cloud.isNotEmpty ? cloud.sort() : debugPrint("there is no cloud");
+      wind.isNotEmpty ? wind.sort() : debugPrint("there is no wind");
+      sun.isNotEmpty ? sun.sort() : debugPrint("there is no sun");
+      rain.isNotEmpty ? rain.sort() : debugPrint("there is no rain");
       notifyListeners();
-    } on DioError catch (e) {
-      debugPrint("hfghgg" + e.toString());
+    } on DioError catch (_) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text("There is some error in your internet connection",
+            style: TextStyle(color: Color(0xFF8B0000))),
+        backgroundColor: const Color(0xFFFF9B9B),
+        shape: Border.all(color: const Color(0xFFD40000)),
+        duration: const Duration(seconds: 2),
+      ));
     }
   }
 }
