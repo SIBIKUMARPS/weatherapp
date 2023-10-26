@@ -12,11 +12,13 @@ import 'package:weather_app_interviw/models/weather_model.dart';
 class weatherProvider extends ChangeNotifier {
   ///........................to get location............................
   Location location = new Location();
+  late LocationData locationweb;
 
   bool? _serviceEnabled;
   PermissionStatus? _permissionGranted;
   LocationPermission? _locationData;
   Position? curentPosition;
+
   TextEditingController locationController = new TextEditingController();
   String? currentAddress;
   WeatherDetailsModel? weatherReport;
@@ -56,6 +58,13 @@ class weatherProvider extends ChangeNotifier {
   }
 
   getLocation() async {
+    //......added for web........................
+    locationweb = await location.getLocation();
+
+    latitude = locationweb.latitude.toString();
+    longitude = locationweb.longitude.toString();
+    print("the location isss $latitude + $longitude");
+
     _serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!_serviceEnabled!) {
       _locationData = await Geolocator.requestPermission();
@@ -68,6 +77,7 @@ class weatherProvider extends ChangeNotifier {
         return;
       }
     }
+
     curentPosition = await Geolocator.getCurrentPosition();
 
     List<geo.Placemark> placemarks = await geo.placemarkFromCoordinates(
@@ -96,7 +106,7 @@ class weatherProvider extends ChangeNotifier {
         cloud.add(weatherReport!.hourly![i].clouds ?? 0);
         wind.add(weatherReport!.hourly![i].windSpeed ?? 0);
         sun.add(weatherReport!.hourly![i].temp ?? 0);
-        rain.add(weatherReport!.hourly![i].rain ?? 0);
+        rain.add(weatherReport!.hourly![i].rain??weatherReport!.hourly![i].rain!.the1H ?? 0);
       }
       cloud.isNotEmpty ? cloud.sort() : debugPrint("there is no cloud");
       wind.isNotEmpty ? wind.sort() : debugPrint("there is no wind");
