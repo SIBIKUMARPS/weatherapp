@@ -72,7 +72,7 @@ class _detailScreenState extends State<detailScreen> {
                     ],
                   ),
                   SizedBox(
-                    height: size.height / 9,
+                    height: size.height / 11,
                   ),
                   Padding(
                     padding:
@@ -80,76 +80,18 @@ class _detailScreenState extends State<detailScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                            boxShadow: const [
-                              BoxShadow(color: Colors.black, spreadRadius: 3),
-                            ],
-                          ),
-                          height: size.height / 5,
-                          width: size.width / 2.3,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Image(
-                                image: AssetImage(
-                                  'assets/images/rain.png',
-                                ),
-                                height: 70,
-                                width: 70,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Min Rain: ${pro.rain.first.toString()}",
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                              Text(
-                                "Max Rain: ${pro.rain.last.toString()}",
-                                style: const TextStyle(fontSize: 20),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                            boxShadow: const [
-                              BoxShadow(color: Colors.black, spreadRadius: 3),
-                            ],
-                          ),
-                          height: size.height / 5,
-                          width: size.width / 2.3,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Image(
-                                image: AssetImage(
-                                  'assets/images/sun.png',
-                                ),
-                                height: 70,
-                                width: 70,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Min Sun: ${pro.sun.first.toString()}",
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                              Text(
-                                "Max Sun: ${pro.sun.last.toString()}",
-                                style: const TextStyle(fontSize: 20),
-                              )
-                            ],
-                          ),
-                        ),
+                        customCuntainer(
+                            size.height / 4.5,
+                            size.width / 2.3,
+                            "Min Rain: ${pro.rain.first.toString()}",
+                            "Max Rain: ${pro.rain.last.toString()}",
+                            'assets/images/rain.png'),
+                        customCuntainer(
+                            size.height / 4.5,
+                            size.width / 2.3,
+                            "Min Sun: ${pro.sun.first.toString()}",
+                            "Max Rain: ${pro.sun.last.toString()}",
+                            'assets/images/sun.png'),
                       ],
                     ),
                   ),
@@ -159,76 +101,18 @@ class _detailScreenState extends State<detailScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                            boxShadow: const [
-                              BoxShadow(color: Colors.black, spreadRadius: 3),
-                            ],
-                          ),
-                          height: size.height / 5,
-                          width: size.width / 2.3,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Image(
-                                image: AssetImage(
-                                  'assets/images/wind.png',
-                                ),
-                                height: 70,
-                                width: 70,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Min Wind: ${pro.wind.first.toString()}",
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                              Text(
-                                "Max Wind: ${pro.wind.last.toString()}",
-                                style: const TextStyle(fontSize: 20),
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                            boxShadow: const [
-                              BoxShadow(color: Colors.black, spreadRadius: 3),
-                            ],
-                          ),
-                          height: size.height / 5,
-                          width: size.width / 2.3,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Image(
-                                image: AssetImage(
-                                  'assets/images/cloud.png',
-                                ),
-                                height: 70,
-                                width: 70,
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Min Cloud: ${pro.cloud.first.toString()}",
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                              Text(
-                                "Max Cloud: ${pro.cloud.last.toString()}",
-                                style: const TextStyle(fontSize: 20),
-                              )
-                            ],
-                          ),
-                        ),
+                        customCuntainer(
+                            size.height / 4.5,
+                            size.width / 2.3,
+                            "Min Wind: ${pro.wind.first.toString()}",
+                            "Max Wind: ${pro.wind.last.toString()}",
+                            'assets/images/wind.png'),
+                        customCuntainer(
+                            size.height / 4.5,
+                            size.width / 2.3,
+                            "Min Cloud: ${pro.cloud.first.toString()}",
+                            "Max Cloud: ${pro.cloud.last.toString()}",
+                            'assets/images/cloud.png'),
                       ],
                     ),
                   )
@@ -251,5 +135,44 @@ class _detailScreenState extends State<detailScreen> {
         }),
       ),
     ));
+  }
+
+  customCuntainer(double height, double width, String minValue, String Maxvalue,
+      String images) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+        boxShadow: const [
+          BoxShadow(color: Colors.black, spreadRadius: 3),
+        ],
+      ),
+      height: height,
+      width: width,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image(
+            image: AssetImage(
+              images,
+            ),
+            height: 70,
+            width: 70,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            minValue,
+            style: const TextStyle(fontSize: 20),
+          ),
+          Text(
+            Maxvalue,
+            style: const TextStyle(fontSize: 20),
+          )
+        ],
+      ),
+    );
   }
 }

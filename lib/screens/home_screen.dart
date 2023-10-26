@@ -104,7 +104,7 @@ class _home_screenState extends State<home_screen> {
                       ),
                       child: InkWell(
                         onTap: () {
-                          if (pro.currentAddress != null) {
+                          if (pro.latitude != null) {
                             if (index == 0) {
                               int time =
                                   Timestamp.fromDate(dates[index]).seconds -
